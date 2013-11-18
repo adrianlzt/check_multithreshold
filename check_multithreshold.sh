@@ -162,7 +162,7 @@ while [ $# -ge 4 ]
     shift
 
     if actualTimeIn $TEMP; then
-      echo "$EXEC_AND_PARAM $OPT"
+      $EXEC_AND_PARAM $OPT
       break
     fi
 done
