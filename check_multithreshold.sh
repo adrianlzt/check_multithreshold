@@ -8,13 +8,9 @@
 #@ of the current hour
 #@ 
 #@ example:
-#@ check_multithreshold.sh -x "/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 22" -t 0000-0800 -w 1 -c 2 -t 0800-2359 -w 5 -c 10
+#@ check_multithreshold.sh -x "/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 22" -t 0000-0800 -p "-w 1 -c 2" -t 0800-2359 -p "-w 5 -c 10"
 #@
 #@ Adrian Lopez
-#@ 
-#@ ToDo:
-#@   - Script which need multiparameter for critical and warning values. 
-#@       Eg.:  check_load [-r] -w WLOAD1,WLOAD5,WLOAD15 -c CLOAD1,CLOAD5,CLOAD15
 #@ 
 #@ ==============================================================================
 #@
@@ -43,7 +39,7 @@ function usage()
   echo "depending in the current hour"
   echo ""
   echo "Usage:"
-  echo "check_multithreshold.sh -x check_file -t HHMM-HHMM -w <range> -c <range> [ -t HHMM-HHMM -w <range> -c <range> ] ..."
+  echo "check_multithreshold.sh -x check_file -t HHMM-HHMM -p "PARAMS" [ -t HHMM-HHMM -p "PARAMS" ] ..."
   echo ""
   echo "Options:"
   echo " -x"
@@ -51,13 +47,12 @@ function usage()
   echo " -t"
   echo "   Time period in wich the next threshold will be applicated."
   echo "   The format is hour and minute of start - hour and minute of finish"
-  echo " -w"
-  echo "   Critical range that will be passed to the script"
-  echo " -c"
-  echo "   Critical range that will be passed to the script"
+  echo " -p"
+  echo "   Parameters specific to the time period"
   echo ""
   echo "Several time periods and critical and warning ranges could be passed"
   echo ""
+  echo "Example: check_multithreshold.sh -x \"/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 22\" -t 0000-0800 -p \"-w 1 -c 2\" -t 0800-2359 -p \"-w 5 -c 10\""
 }
  
 #% 
@@ -117,7 +112,7 @@ STATE_CRITICAL=2
 STATE_UNKNOWN=3
 # exit ${STATE_OK}
 
-if [[ $# -le 7 ]]; then
+if [[ $# -le 5 ]]; then
   error "Insuficient parameters"
   usage
   exit 1
@@ -141,14 +136,14 @@ if [[ ! -x $EXEC ]]; then
 fi
 
 # Check there is enough parameters
-if [[ $(( $# % 6 )) -ne 0 ]]; then
+if [[ $(( $# % 4 )) -ne 0 ]]; then
   error "Insufficient parameters"
   usage
   exit 1
 fi
 
 # Cheking parameters
-while [ $# -ge 6 ]
+while [ $# -ge 4 ]
   do
     PARAM=$1
     shift
@@ -159,20 +154,12 @@ while [ $# -ge 6 ]
 
     PARAM=$1
     shift
-    check_param $PARAM "-w"
-    WARN=$1
+    check_param $PARAM "-p"
+    OPT=$1
     shift
-    check_regex $WARN \[0-9]+\
-
-    PARAM=$1
-    shift
-    check_param $PARAM "-c"
-    CRIT=$1
-    shift
-    check_regex $CRIT \[0-9]+\
 
     if actualTimeIn $TEMP; then
-      echo "$EXEC_AND_PARAM -w $WARN -c $CRIT"
+      echo "$EXEC_AND_PARAM $OPT"
       break
     fi
 done
