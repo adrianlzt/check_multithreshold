@@ -86,14 +86,17 @@ function check_regex()
 #% 
 #@ actualTimeIn 
 #@  - Check if current time is inside the time period
-#@
+#@  - Date is forced to be a decimal number
 #% 
 function actualTimeIn()
 {
   startHour=${1%-*}
+  startHourNumber=$(( 10#$startHour ))
   endHour=${1#*-}
+  endHourNumber=$(( 10#$endHour ))
   currentHour=$(date +%H%M)
-  if [[ ( $currentHour -gt $startHour ) && ( $currentHour -lt $endHour ) ]]; then
+  currentHourNumber=$(( 10#$currentHour ))
+  if [[ ( $currentHourNumber -gt $startHourNumber) && ( $currentHourNumber -lt $endHourNumber ) ]]; then
     return 0
   else
     return 1
