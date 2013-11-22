@@ -47,6 +47,7 @@ function usage()
   echo " -t"
   echo "   Time period in wich the next threshold will be applicated."
   echo "   The format is hour and minute of start - hour and minute of finish"
+  echo "   The period could not pass over 2359. So, 2200-0300 will not be valid."
   echo " -p"
   echo "   Parameters specific to the time period"
   echo ""
