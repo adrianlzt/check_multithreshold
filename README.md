@@ -2,6 +2,7 @@
 Check Multithreshold allows you to execute the same script with different warning and critical values
 depending in the current hour
 
+```
 Usage:
 check_multithreshold.sh -x check_file -t HHMM-HHMM -p PARAMS [ -t HHMM-HHMM -p PARAMS ] ...
 
@@ -18,5 +19,6 @@ Options:
 Several time periods and critical and warning ranges could be passed
 
 Example: check_multithreshold.sh -x "/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 22" -t 0000-0800 -p "-w 1 -c 2" -t 0800-2359 -p "-w 5 -c 10"
+```
 
 Adrian Lopez
